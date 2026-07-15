@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LocalHub | 지도</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <style>
+      :root {
+        --mint-50: #f4fdfb;
+        --mint-100: #dbf5ee;
+        --mint-200: #bfeee5;
+        --mint-400: #79d2bf;
+        --mint-500: #47bfa6;
+        --mint-700: #2d8e7d;
+        --ink-700: #25433d;
+        --ink-500: #5d7570;
+        --white: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Noto Sans KR", sans-serif;
+        background: linear-gradient(135deg, var(--mint-50), #ffffff 70%);
+        color: var(--ink-700);
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      button {
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0 24px;
+      }
+
+      .brand {
+        font-family: "Poppins", sans-serif;
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: var(--mint-700);
+        letter-spacing: -0.03em;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 16px;
+        font-weight: 700;
+        color: var(--ink-500);
+      }
+
+      .nav-links a:hover {
+        color: var(--mint-700);
+      }
+
+      .section {
+        margin-bottom: 14px;
+      }
+
+      .section-title {
+        font-family: "Poppins", sans-serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 14px;
+      }
+
+      .tab-switcher {
+        margin-bottom: 24px;
+      }
+
+      .tab-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--mint-200);
+        background: var(--white);
+        color: var(--ink-500);
+        border-radius: 999px;
+        padding: 10px 14px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .tab-button.active {
+        background: var(--mint-500);
+        color: white;
+        border-color: var(--mint-500);
+      }
+
+      .map-card {
+        background: var(--white);
+        border: 1px solid var(--mint-100);
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 8px 24px rgba(35, 67, 61, 0.05);
+      }
+
+      .map-card .map-controls {
+        justify-content: center;
+      }
+
+      .map-card .btn {
+        display: block;
+        margin: 16px auto 0;
+        width: max-content;
+      }
+
+      .map-card > p {
+        text-align: center;
+        margin-top: 8px;
+      }
+
+      .marker-list {
+        justify-items: stretch;
+      }
+
+      .marker-item {
+        text-align: center;
+      }
+
+      .info-grid {
+        justify-items: center;
+      }
+
+      .info-card {
+        text-align: center;
+        max-width: 720px;
+        margin: 0 auto;
+      }
+
+      .pagination-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .pagination-controls span {
+        min-width: 56px;
+        text-align: center;
+        display: inline-block;
+      }
+
+      .map-box {
+        min-height: 320px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #bfeee5, #79d2bf);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 20px;
+        padding: 20px;
+      }
+
+      .map-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 18px;
+        align-items: center;
+      }
+
+      .map-controls label {
+        font-weight: 700;
+        margin-right: 8px;
+      }
+
+      .map-controls select {
+        border: 1px solid var(--mint-200);
+        border-radius: 999px;
+        padding: 10px 14px;
+        background: var(--white);
+        color: var(--ink-700);
+        font-weight: 700;
+      }
+
+      .leaflet-container {
+        width: 100%;
+        min-height: 420px;
+        border-radius: 20px;
+        margin-bottom: 20px;
+      }
+
+      .marker-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 12px;
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @media (max-width: 760px) {
+        .marker-list {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .marker-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 14px 16px;
+        border: 1px solid var(--mint-100);
+        border-radius: 16px;
+        background: var(--mint-50);
+      }
+
+      .marker-item strong {
+        font-size: 1rem;
+      }
+
+      .marker-item span {
+        color: var(--ink-500);
+        font-size: 0.95rem;
+      }
+
+      .place-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .place-card {
+        background: var(--mint-50);
+        border: 1px solid var(--mint-100);
+        border-radius: 16px;
+        padding: 18px;
+      }
+
+      .place-card h3 {
+        margin: 0 0 8px;
+      }
+
+      .place-card p {
+        margin: 0;
+        color: var(--ink-500);
+      }
+
+      .btn {
+        margin-top: 20px;
+        border: none;
+        background: var(--mint-500);
+        color: white;
+        padding: 12px 18px;
+        border-radius: 999px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .info-grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .info-card {
+        background: var(--white);
+        border: 1px solid var(--mint-100);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 8px 24px rgba(35, 67, 61, 0.05);
+      }
+
+      .info-card h3 {
+        margin: 0 0 10px;
+      }
+
+      .info-card p {
+        margin: 0;
+        color: var(--ink-500);
+        line-height: 1.7;
+      }
+
+      .chatbot {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-end;
+        gap: 10px;
+      }
+
+      .chat-window {
+        width: 320px;
+        background: white;
+        border: 1px solid var(--mint-100);
+        border-radius: 20px;
+        padding: 16px;
+        box-shadow: 0 16px 40px rgba(35, 67, 61, 0.16);
+      }
+
+      .chat-window h4 {
+        margin: 0 0 10px;
+      }
+
+      .message {
+        background: var(--mint-50);
+        padding: 8px 10px;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        font-size: 0.92rem;
+        line-height: 1.5;
+        word-break: break-word;
+      }
+
+      .message.loading {
+        color: var(--ink-500);
+        font-style: italic;
+      }
+
+      .chat-input {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .chat-input input {
+        flex: 1;
+        border: 1px solid var(--mint-200);
+        border-radius: 999px;
+        padding: 10px 12px;
+      }
+
+      .chat-input button {
+        border: none;
+        border-radius: 999px;
+        padding: 10px 12px;
+        background: var(--mint-500);
+        color: white;
+      }
+
+      .chat-toggle {
+        border: none;
+        border-radius: 999px;
+        background: var(--mint-500);
+        color: white;
+        padding: 14px 18px;
+        font-weight: 800;
+        box-shadow: 0 10px 24px rgba(71, 191, 166, 0.3);
+      }
+
+      @media (max-width: 560px) {
+        .container {
+          padding: 18px;
+        }
+        .topbar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 0 24px;
+        }
+        .chat-window {
+          width: 280px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <div class="container">
+        <header class="topbar">
+          <a class="brand" href="Front_end.html">LocalHub</a>
+          <nav class="nav-links">
+            <a href="Front_end.html">홈</a>
+            <a href="Front_information.html">지역정보</a>
+            <a href="Front_map_tab.html">지도</a>
+            <a href="Front_community.html">커뮤니티</a>
+          </nav>
+        </header>
+
+        <section class="section">
+          <h1 class="page-title">지도</h1>
+          <p class="page-subtitle">
+            한국관광공사 TourAPI 데이터를 기반으로 한 지역 정보 검색 및 카테고리별 필터를 제공합니다.
+          </p>
+
+          <div v-if="activeTab === 'map'" class="map-card">
+            <div class="map-controls">
+              <label for="category-select">카테고리 선택</label>
+              <select id="category-select" v-model="selectedCategory" @change="applyCategoryFilter">
+                <option v-for="category in categories" :key="category.key" :value="category.key">
+                  {{ category.label }}
+                </option>
+              </select>
+            </div>
+
+            <div id="map" class="leaflet-container"></div>
+
+            <button class="btn" @click="showMessage">현재 위치 확인</button>
+            <p v-if="message">{{ message }}</p>
+
+            <div class="marker-list">
+              <div class="marker-item" v-for="place in paginatedPlaces" :key="place.id">
+                <strong>{{ place.name }}</strong>
+                <span>{{ place.categoryLabel }}</span>
+                <span>{{ place.address }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="info-grid">
+            <div class="info-card" v-for="item in infoItems" :key="item.id">
+              <h3>{{ item.title }}</h3>
+              <p>{{ item.description }}</p>
+            </div>
+          </div>
+
+          <div class="pagination-controls">
+            <button class="btn" @click="previousPage" :disabled="!hasPrevPage">
+              이전
+            </button>
+            <span>{{ page + 1 }} / {{ pageCount }}</span>
+            <button class="btn" @click="nextPage" :disabled="!hasNextPage">
+              다음
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <div id="chat" class="chatbot">
+        <div v-if="chatOpen" class="chat-window">
+          <h4>LocalHub 챗봇</h4>
+          <div v-for="(msg, index) in chatMessages" :key="index" class="message" :class="{'loading': msg.isLoading}">
+            {{ msg.text }}
+          </div>
+
+          <div class="chat-input">
+            <input
+              v-model="chatInput"
+              @keyup.enter="sendMessage"
+              placeholder="질문을 입력하세요 (예: 구미 맛집 추천)"
+              :disabled="isChatLoading"
+            />
+            <button @click="sendMessage" :disabled="isChatLoading">전송</button>
+          </div>
+        </div>
+
+        <button class="chat-toggle" @click="chatOpen = !chatOpen">
+          {{ chatOpen ? "닫기" : "💬 챗봇" }}
+        </button>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+      const { createApp } = Vue;
+      const API_BASE_URL = "https://backendserver-tuvk.onrender.com";
+
+      createApp({
+        data() {
+          return {
+            activeTab: "map",
+            message: "",
+            categories: [
+              { key: "tour", label: "관광지" },
+              { key: "shopping", label: "쇼핑" },
+              { key: "food", label: "음식점" },
+              { key: "festival", label: "축제" },
+              { key: "stay", label: "숙박" },
+              { key: "culture", label: "문화시설" },
+              { key: "sports", label: "레포츠" },
+              { key: "course", label: "여행코스" },
+            ],
+            selectedCategory: "tour",
+            places: [],
+            filteredPlaces: [],
+            map: null,
+            markers: [],
+            currentLocationMarker: null,
+            currentLocationCircle: null,
+            mapCenter: [36.1135, 128.3330],
+            mapZoom: 11,
+            page: 0,
+            pageSize: 10,
+            chatOpen: false,
+            chatInput: "",
+            isChatLoading: false,
+            chatMessages: [
+              { text: "안녕하세요! 구미·경북권 지역 정보를 도와드릴게요.", isLoading: false },
+              { text: "예: “구미 라면 축제 일정”, “금오산 맛집 추천”, “관광 코스”라고 말해보세요.", isLoading: false },
+            ],
+          };
+        },
+        async mounted() {
+          this.initMap();
+          await this.loadLocations();
+        },
+        computed: {
+          paginatedPlaces() {
+            const start = this.page * this.pageSize;
+            return this.filteredPlaces.slice(start, start + this.pageSize);
+          },
+          pageCount() {
+            return Math.ceil(this.filteredPlaces.length / this.pageSize);
+          },
+          hasPrevPage() {
+            return this.page > 0;
+          },
+          hasNextPage() {
+            return this.page < this.pageCount - 1;
+          },
+        },
+        methods: {
+          initMap() {
+            this.map = L.map("map").setView(this.mapCenter, this.mapZoom);
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            }).addTo(this.map);
+          },
+          async loadLocations() {
+            try {
+              const response = await fetch(`${API_BASE_URL}/json-items?limit=2000&offset=0`);
+              if (!response.ok) {
+                throw new Error("서버 응답 오류");
+              }
+              const data = await response.json();
+              const locations = Array.isArray(data) ? data : data.items || [];
+
+              this.places = locations
+                .map((loc) => {
+                  const rawCategory =
+                    loc.contentType ||
+                    loc.contentTypeId ||
+                    loc.category_name ||
+                    loc.categoryLabel ||
+                    loc.category ||
+                    "";
+
+                  const categoryLabel =
+                    loc.contentType ||
+                    this.mapContentTypeLabel?.(rawCategory) ||
+                    loc.category_name ||
+                    loc.categoryLabel ||
+                    loc.category ||
+                    "기타";
+
+                  const lat = parseFloat(loc.mapy ?? loc.lat ?? loc.latitude ?? "");
+                  const lng = parseFloat(loc.mapx ?? loc.lng ?? loc.longitude ?? "");
+
+                  return {
+                    id: loc.contentid ?? loc.id ?? loc.location_id ?? Math.random().toString(36).slice(2, 9),
+                    name: loc.title ?? loc.name ?? "이름 없음",
+                    categoryLabel,
+                    category: this.mapCategoryKey(rawCategory),
+                    address: loc.addr1 ?? loc.address ?? loc.addr2 ?? "주소 정보 없음",
+                    lat,
+                    lng,
+                  };
+                })
+                .filter(
+                  (place) =>
+                    Number.isFinite(place.lat) &&
+                    Number.isFinite(place.lng) &&
+                    !(place.lat === 0 && place.lng === 0)
+                );
+
+              this.applyCategoryFilter();
+            } catch (error) {
+              console.warn("백엔드 연동 실패, 기본 더미 위치를 사용합니다.", error);
+              this.setFallbackDummyData();
+            }
+          },
+          applyCategoryFilter() {
+            this.clearMapState();
+            this.page = 0;
+            this.filteredPlaces =
+              this.selectedCategory === "all"
+                ? this.places
+                : this.places.filter((place) => place.category === this.selectedCategory);
+            this.updateMapMarkers();
+          },
+          clearMapState() {
+            if (this.map) {
+              this.map.closePopup();
+              this.map.invalidateSize(true);
+            }
+
+            this.markers.forEach((marker) => {
+              if (this.map && this.map.hasLayer(marker)) {
+                this.map.removeLayer(marker);
+              }
+            });
+            this.markers = [];
+
+            if (this.currentLocationMarker) {
+              this.map.removeLayer(this.currentLocationMarker);
+              this.currentLocationMarker = null;
+            }
+            if (this.currentLocationCircle) {
+              this.map.removeLayer(this.currentLocationCircle);
+              this.currentLocationCircle = null;
+            }
+          },
+          updateMapMarkers() {
+            if (!this.map) return;
+            this.map.closePopup();
+            this.map.invalidateSize(true);
+
+            this.markers.forEach((marker) => {
+              if (this.map.hasLayer(marker)) {
+                this.map.removeLayer(marker);
+              }
+            });
+            this.markers = [];
+
+            this.filteredPlaces.forEach((place) => {
+              if (
+                Number.isFinite(place.lat) &&
+                Number.isFinite(place.lng) &&
+                !(place.lat === 0 && place.lng === 0)
+              ) {
+                const marker = L.marker([place.lat, place.lng]).addTo(this.map);
+                marker.bindPopup(`
+                  <strong>${place.name}</strong><br />
+                  ${place.categoryLabel}<br />
+                  ${place.address}
+                `);
+                this.markers.push(marker);
+              }
+            });
+
+            if (this.filteredPlaces.length > 0) {
+              const bounds = L.latLngBounds(this.filteredPlaces.map((place) => [place.lat, place.lng]));
+              if (bounds.isValid()) {
+                this.map.fitBounds(bounds.pad(0.15), { maxZoom: 14, animate: false });
+              }
+            } else {
+              this.map.setView(this.mapCenter, this.mapZoom);
+            }
+          },
+          mapCategoryKey(categoryName) {
+            if (!categoryName) return "all";
+            const normalized = categoryName.toString().trim().toLowerCase();
+
+            const map = {
+              관광지: "tour",
+              tour: "tour",
+              "12": "tour",
+
+              문화시설: "culture",
+              culture: "culture",
+              "14": "culture",
+
+              축제: "festival",
+              축제공연행사: "festival",
+              festival: "festival",
+              "15": "festival",
+
+              여행코스: "course",
+              course: "course",
+              "25": "course",
+
+              레포츠: "sports",
+              sports: "sports",
+              "28": "sports",
+
+              숙박: "stay",
+              stay: "stay",
+              "32": "stay",
+
+              쇼핑: "shopping",
+              shopping: "shopping",
+              "38": "shopping",
+
+              음식점: "food",
+              food: "food",
+              "39": "food",
+            };
+
+            return map[normalized] || "all";
+          },
+          showMessage() {
+            if (!navigator.geolocation) {
+              this.message = "브라우저가 위치 정보를 지원하지 않습니다.";
+              return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                const { latitude, longitude } = position.coords;
+                this.message = "현재 위치를 가져왔습니다.";
+                this.setCurrentLocation(latitude, longitude);
+              },
+              (error) => {
+                this.message = "현재 위치를 가져올 수 없습니다. 위치 권한을 허용해주세요.";
+                console.warn(error);
+              },
+              {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0,
+              }
+            );
+          },
+          previousPage() {
+            if (this.hasPrevPage) {
+              this.page -= 1;
+            }
+          },
+          nextPage() {
+            if (this.hasNextPage) {
+              this.page += 1;
+            }
+          },
+          setCurrentLocation(lat, lng) {
+            if (this.currentLocationMarker) {
+              this.map.removeLayer(this.currentLocationMarker);
+            }
+            if (this.currentLocationCircle) {
+              this.map.removeLayer(this.currentLocationCircle);
+            }
+
+            this.currentLocationMarker = L.marker([lat, lng]).addTo(this.map);
+            this.currentLocationMarker.bindPopup("<strong>현재 위치</strong>").openPopup();
+
+            this.currentLocationCircle = L.circle([lat, lng], {
+              radius: 80,
+              color: "#47bfa6",
+              fillColor: "#47bfa6",
+              fillOpacity: 0.2,
+            }).addTo(this.map);
+
+            this.map.setView([lat, lng], 14);
+          },
+          setFallbackDummyData() {
+            this.places = [
+              {
+                id: 1,
+                name: "금오산 도립공원",
+                categoryLabel: "관광지",
+                category: "tour",
+                address: "경북 구미시 금오산로",
+                lat: 36.1227,
+                lng: 128.4197,
+              },
+              {
+                id: 2,
+                name: "구미 롯데백화점",
+                categoryLabel: "쇼핑",
+                category: "shopping",
+                address: "경북 구미시 원평동",
+                lat: 36.1230,
+                lng: 128.3570,
+              },
+              {
+                id: 3,
+                name: "금오산온천호텔",
+                categoryLabel: "숙박",
+                category: "stay",
+                address: "경북 구미시 금오산로",
+                lat: 36.1251,
+                lng: 128.4065,
+              },
+            ];
+            this.applyCategoryFilter();
+          },
+          async sendMessage() {
+            const text = this.chatInput.trim();
+            if (!text) return;
+
+            this.chatMessages.push({ text: `질문: ${text}`, isLoading: false });
+            this.chatInput = "";
+            this.isChatLoading = true;
+
+            const loadingIndex = this.chatMessages.length;
+            this.chatMessages.push({ text: "답변을 생각 중입니다...", isLoading: true });
+
+            try {
+              const response = await fetch(`${API_BASE_URL}/chatbot/chat`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: text }),
+              });
+
+              if (!response.ok) {
+                this.chatMessages[loadingIndex] = { text: "답변: 챗봇 서버 응답에 문제가 있습니다.", isLoading: false };
+                return;
+              }
+
+              const data = await response.json();
+              let reply = data?.reply ?? (typeof data === "string" ? data : JSON.stringify(data));
+
+              try {
+                const logsResp = await fetch(`${API_BASE_URL}/chatbot/logs`);
+                if (logsResp.ok) {
+                  const logsJson = await logsResp.json();
+
+                  const extractAssistant = (obj) => {
+                    if (!obj) return null;
+                    if (typeof obj === "string") return obj;
+                    if (Array.isArray(obj)) return extractAssistant(obj[obj.length - 1]);
+                    if (obj.reply) return obj.reply;
+                    if (obj.text) return obj.text;
+                    if (obj.message) return obj.message;
+                    if (obj.messages && Array.isArray(obj.messages)) {
+                      for (let i = obj.messages.length - 1; i >= 0; i--) {
+                        const m = obj.messages[i];
+                        if (m.role === "assistant") return m.content ?? m.text ?? m.message ?? null;
+                      }
+                    }
+                    if (obj.choices && Array.isArray(obj.choices) && obj.choices.length) {
+                      const lastChoice = obj.choices[obj.choices.length - 1];
+                      const msg = lastChoice.message || lastChoice;
+                      return msg?.content ?? msg?.text ?? null;
+                    }
+                    return null;
+                  };
+
+                  const logReply = extractAssistant(logsJson);
+                  if (logReply) reply = logReply;
+                }
+              } catch (err) {
+                console.debug("chatbot/logs 호출 실패 또는 없음:", err);
+              }
+
+              this.chatMessages[loadingIndex] = { text: `답변: ${reply}`, isLoading: false };
+            } catch (error) {
+              console.warn("챗봇 API 호출 실패, 로컬 답변으로 대체", error);
+              this.chatMessages[loadingIndex] = {
+                text: `답변: ${this.generateFallbackAnswer(text)} (오프라인)`,
+                isLoading: false,
+              };
+            } finally {
+              this.isChatLoading = false;
+              setTimeout(() => {
+                const win = document.querySelector(".chat-window");
+                if (win) win.scrollTop = win.scrollHeight;
+              }, 50);
+            }
+          },
+          generateFallbackAnswer(text) {
+            if (text.includes("축제")) return "이번 주 구미의 대표 축제인 '구미 라면 축제' 일정을 확인해보세요!";
+            if (text.includes("맛집") || text.includes("식당")) return "금오산 주변, 혹은 원평동 쪽에서 가성비 좋은 선산곱창 맛집을 추천해드릴 수 있어요.";
+            if (text.includes("관광") || text.includes("코스")) return "금오산 도립공원, 동락공원, 에코랜드 순으로 방문하시는 코스를 추천해드립니다.";
+            return "원하시는 구미·경북권 지역 정보나 축제, 맛집 관련 질문을 조금 더 구체적으로 보내주세요.";
+          },
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>

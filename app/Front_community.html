@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LocalHub | 커뮤니티</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --mint-50: #f4fdfb;
+        --mint-100: #dbf5ee;
+        --mint-200: #bfeee5;
+        --mint-400: #79d2bf;
+        --mint-500: #47bfa6;
+        --mint-700: #2d8e7d;
+        --ink-700: #25433d;
+        --ink-500: #5d7570;
+        --white: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Noto Sans KR", sans-serif;
+        background: linear-gradient(135deg, var(--mint-50), #ffffff 70%);
+        color: var(--ink-700);
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      button {
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0 24px;
+      }
+
+      .brand {
+        font-family: "Poppins", sans-serif;
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: var(--mint-700);
+        letter-spacing: -0.03em;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 16px;
+        font-weight: 700;
+        color: var(--ink-500);
+      }
+
+      .nav-links a:hover {
+        color: var(--mint-700);
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
+
+      .page-title {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 800;
+      }
+
+      .page-subtitle {
+        margin: 8px 0 0;
+        color: var(--ink-500);
+        line-height: 1.7;
+      }
+
+      .write-button {
+        border: none;
+        background: var(--mint-500);
+        color: white;
+        padding: 14px 22px;
+        border-radius: 999px;
+        font-weight: 700;
+      }
+
+      .tab-switcher {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 24px;
+      }
+
+      .tab-button {
+        border: 1px solid var(--mint-200);
+        background: var(--white);
+        color: var(--ink-500);
+        border-radius: 999px;
+        padding: 10px 16px;
+        font-weight: 700;
+      }
+
+      .tab-button.active {
+        background: var(--mint-500);
+        color: white;
+        border-color: var(--mint-500);
+      }
+
+      .search-area {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+
+      .search-area input {
+        width: 100%;
+        border: 1px solid var(--mint-200);
+        border-radius: 999px;
+        padding: 14px 18px;
+        font-size: 1rem;
+        color: var(--ink-700);
+      }
+
+      .search-area button {
+        border: none;
+        border-radius: 999px;
+        background: var(--mint-500);
+        color: white;
+        padding: 14px 24px;
+        font-weight: 700;
+      }
+
+      .post-list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .post-card-link {
+        display: block;
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .post-card {
+        background: var(--white);
+        border: 1px solid var(--mint-100);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 8px 24px rgba(35, 67, 61, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+
+      .post-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 32px rgba(35, 67, 61, 0.14);
+        border-color: var(--mint-200);
+      }
+
+      .post-card h3 {
+        margin: 0 0 10px;
+      }
+
+      .post-card p {
+        margin: 0;
+        color: var(--ink-500);
+        line-height: 1.7;
+      }
+
+      .post-meta {
+        margin-top: 14px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .meta-pill {
+        background: var(--mint-50);
+        color: var(--mint-700);
+        padding: 7px 12px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        border-radius: 20px;
+        background: var(--mint-50);
+        color: var(--ink-500);
+      }
+
+      .write-panel {
+        background: var(--white);
+        border: 1px solid var(--mint-100);
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 12px 28px rgba(35, 67, 61, 0.08);
+        margin-bottom: 24px;
+      }
+
+      .write-row {
+        display: grid;
+        gap: 14px;
+      }
+
+      .write-row input,
+      .write-row textarea,
+      .write-row select {
+        width: 100%;
+        border: 1px solid var(--mint-200);
+        border-radius: 16px;
+        padding: 14px 16px;
+        font-size: 1rem;
+        color: var(--ink-700);
+      }
+
+      .write-row .password-input {
+        width: 100%;
+        max-width: 200px;
+      }
+
+      .write-row textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .write-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .write-actions button {
+        border: none;
+        border-radius: 999px;
+        padding: 12px 20px;
+        font-weight: 700;
+      }
+
+      .write-actions .cancel {
+        background: var(--mint-50);
+        color: var(--ink-700);
+      }
+
+      .write-actions .submit {
+        background: var(--mint-500);
+        color: white;
+      }
+
+      .chatbot {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-end;
+        gap: 10px;
+      }
+
+      .chat-window {
+        width: 320px;
+        background: white;
+        border: 1px solid var(--mint-100);
+        border-radius: 20px;
+        padding: 16px;
+        box-shadow: 0 16px 40px rgba(35, 67, 61, 0.16);
+      }
+
+      .chat-window h4 {
+        margin: 0 0 10px;
+      }
+
+      .message {
+        background: var(--mint-50);
+        padding: 8px 10px;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        font-size: 0.92rem;
+        line-height: 1.5;
+        word-break: break-word;
+      }
+
+      .message.loading {
+        color: var(--ink-500);
+        font-style: italic;
+      }
+
+      .chat-input {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .chat-input input {
+        flex: 1;
+        border: 1px solid var(--mint-200);
+        border-radius: 999px;
+        padding: 10px 12px;
+      }
+
+      .chat-input button {
+        border: none;
+        border-radius: 999px;
+        padding: 10px 12px;
+        background: var(--mint-500);
+        color: white;
+      }
+
+      .chat-toggle {
+        border: none;
+        border-radius: 999px;
+        background: var(--mint-500);
+        color: white;
+        padding: 14px 18px;
+        font-weight: 800;
+        box-shadow: 0 10px 24px rgba(71, 191, 166, 0.3);
+      }
+
+      @media (max-width: 900px) {
+        .search-area {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .container {
+          padding: 18px;
+        }
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+        .chat-window {
+          width: 280px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <div class="container">
+        <header class="topbar">
+          <a class="brand" href="Front_end.html">LocalHub</a>
+          <nav class="nav-links">
+            <a href="Front_end.html">홈</a>
+            <a href="Front_information.html">지역정보</a>
+            <a href="Front_map_tab.html">지도</a>
+            <a href="Front_community.html">커뮤니티</a>
+          </nav>
+        </header>
+
+        <div class="page-header">
+          <div>
+            <div class="page-title">커뮤니티</div>
+            <div class="page-subtitle">
+              자유롭게 지역 정보를 공유하고, 카테고리별 게시물을 확인하세요.
+            </div>
+          </div>
+          <button class="write-button" @click="toggleWrite">
+            글쓰기
+          </button>
+        </div>
+
+        <div class="tab-switcher">
+          <button type="button" class="tab-button" :class="{ active: activeTab === 'all' }" @click="selectTab('all')">전체</button>
+          <button type="button" class="tab-button" :class="{ active: activeTab === 'tour' }" @click="selectTab('tour')">관광지</button>
+          <button type="button" class="tab-button" :class="{ active: activeTab === 'culture' }" @click="selectTab('culture')">문화시설</button>
+          <button type="button" class="tab-button" :class="{ active: activeTab === 'festival' }" @click="selectTab('festival')">축제공연행사</button>
+          <button type="button" class="tab-button" :class="{ active: activeTab === 'course' }" @click="selectTab('course')">여행코스</button>
+          <button type="button" class="tab-button" :class="{ active: activeTab === 'leports' }" @click="selectTab('leports')">레포츠</button>
+          <button type="button" class="tab-button" :class="{ active: activeTab === 'stay' }" @click="selectTab('stay')">숙박</button>
+          <button type="button" class="tab-button" :class="{ active: activeTab === 'shopping' }" @click="selectTab('shopping')">쇼핑</button>
+          <button type="button" class="tab-button" :class="{ active: activeTab === 'food' }" @click="selectTab('food')">음식점</button>
+        </div>
+
+        <div class="search-area">
+          <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="제목 · 내용을 검색하세요"
+            @keyup.enter="applySearch"
+          />
+          <button type="button" @click="applySearch">검색</button>
+        </div>
+
+        <div v-if="showWritePanel" class="write-panel">
+          <div class="write-row">
+            <select v-model="newPost.category">
+              <option value="tour">관광지</option>
+              <option value="culture">문화시설</option>
+              <option value="festival">축제공연행사</option>
+              <option value="course">여행코스</option>
+              <option value="leports">레포츠</option>
+              <option value="stay">숙박</option>
+              <option value="shopping">쇼핑</option>
+              <option value="food">음식점</option>
+            </select>
+            <input type="text" v-model="newPost.nickname" placeholder="닉네임을 입력하세요" />
+            <input type="text" v-model="newPost.title" placeholder="제목을 입력하세요" />
+            <textarea v-model="newPost.content" placeholder="내용을 입력하세요"></textarea>
+            <input type="password" class="password-input" v-model="newPost.password" placeholder="비밀번호 (수정/삭제용)" />
+          </div>
+          <div class="write-actions">
+            <button class="cancel" @click="toggleWrite">취소</button>
+            <button class="submit" @click="submitPost">등록</button>
+          </div>
+        </div>
+
+        <div class="post-list">
+          <div v-if="filteredPosts.length === 0" class="empty-state">
+            조건에 맞는 게시물이 없습니다.
+          </div>
+
+          <a
+            v-for="post in filteredPosts"
+            :key="post.id"
+            class="post-card-link"
+            :href="`Front_community_detail.html?post_id=${post.id}`"
+          >
+            <div class="post-card">
+              <h3>{{ post.title }}</h3>
+              <p>{{ post.content }}</p>
+              <div class="post-meta">
+                <span class="meta-pill">{{ post.categoryLabel }}</span>
+                <span class="meta-pill">{{ post.author }}</span>
+                <span class="meta-pill">{{ post.date }}</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div id="chat" class="chatbot">
+        <div v-if="chatOpen" class="chat-window">
+          <h4>LocalHub 챗봇</h4>
+          <div v-for="(msg, index) in chatMessages" :key="index" class="message" :class="{'loading': msg.isLoading}">
+            {{ msg.text }}
+          </div>
+
+          <div class="chat-input">
+            <input
+              v-model="chatInput"
+              @keyup.enter="sendMessage"
+              placeholder="질문을 입력하세요 (예: 구미 맛집 추천)"
+              :disabled="isChatLoading"
+            />
+            <button @click="sendMessage" :disabled="isChatLoading">전송</button>
+          </div>
+        </div>
+
+        <button class="chat-toggle" @click="chatOpen = !chatOpen">
+          {{ chatOpen ? "닫기" : "💬 챗봇" }}
+        </button>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+      const { createApp } = Vue;
+
+      const API_BASE_URL = "https://backendserver-tuvk.onrender.com";
+
+      const CATEGORY_MAP = {
+        1: { key: "tour", name: "관광지" },
+        2: { key: "food", name: "음식점" },
+        3: { key: "festival", name: "축제" },
+        4: { key: "stay", name: "숙박" },
+        5: { key: "shopping", name: "쇼핑" },
+        6: { key: "culture", name: "문화시설" },
+        7: { key: "leports", name: "레포츠" },
+        8: { key: "course", name: "여행코스" }
+      };
+
+      const NAME_TO_KEY = {
+        "관광지": "tour",
+        "음식점": "food",
+        "축제": "festival",
+        "숙박": "stay",
+        "쇼핑": "shopping",
+        "문화시설": "culture",
+        "레포츠": "leports",
+        "여행코스": "course"
+      };
+
+      const KEY_TO_NAME = Object.fromEntries(
+        Object.entries(NAME_TO_KEY).map(([k, v]) => [v, k])
+      );
+
+      function toFrontendPost(post) {
+        if (post.category_name && String(post.category_name).trim()) {
+          const label = String(post.category_name).trim();
+          const key = NAME_TO_KEY[label] || (CATEGORY_MAP[post.category_id]?.key || "all");
+          return {
+            id: post.id,
+            category: key,
+            categoryLabel: label,
+            title: post.title,
+            content: post.content,
+            author: post.nickname || "익명",
+            date: post.created_at ? post.created_at.split(" ")[0] : "방금 전"
+          };
+        }
+
+        const cat = CATEGORY_MAP[post.category_id] || { key: "all", name: "기타" };
+        return {
+          id: post.id,
+          category: cat.key,
+          categoryLabel: cat.name,
+          title: post.title,
+          content: post.content,
+          author: post.nickname || "익명",
+          date: post.created_at ? post.created_at.split(" ")[0] : "방금 전"
+        };
+      }
+
+      createApp({
+        data() {
+          return {
+            activeTab: "all",
+            searchQuery: "",
+            showWritePanel: false,
+            newPost: {
+              category: "tour",
+              title: "",
+              content: "",
+              password: "",
+              nickname: ""
+            },
+            posts: [],
+            chatOpen: false,
+            chatInput: "",
+            isChatLoading: false,
+            chatMessages: [
+              { text: "안녕하세요! 구미·경북권 지역 정보를 도와드릴게요.", isLoading: false },
+              { text: "예: “구미 라면 축제 일정”, “금오산 맛집 추천”, “관광 코스”라고 말해보세요.", isLoading: false },
+            ],
+          };
+        },
+        async mounted() {
+          await this.fetchPosts();
+        },
+        computed: {
+          filteredPosts() {
+            return this.posts.filter((post) => {
+              const matchesTab = this.activeTab === "all" || post.category === this.activeTab;
+              const keyword = this.searchQuery.trim().toLowerCase();
+
+              const titleMatch = post.title ? post.title.toLowerCase().includes(keyword) : false;
+              const contentMatch = post.content ? post.content.toLowerCase().includes(keyword) : false;
+              const categoryMatch = post.categoryLabel ? post.categoryLabel.toLowerCase().includes(keyword) : false;
+
+              return matchesTab && (keyword === "" || titleMatch || contentMatch || categoryMatch);
+            });
+          }
+        },
+        methods: {
+          async fetchPosts() {
+            try {
+              const response = await fetch(`${API_BASE_URL}/posts/`);
+              if (!response.ok) throw new Error("서버 응답 오류");
+
+              const data = await response.json();
+              const postsRaw = Array.isArray(data) ? data : (data.posts || data.results || []);
+
+              postsRaw.sort((a, b) => {
+                if (a.created_at && b.created_at) return new Date(b.created_at) - new Date(a.created_at);
+                if (a.id && b.id) return b.id - a.id;
+                return 0;
+              });
+
+              this.posts = postsRaw.map(toFrontendPost);
+              console.log("게시판 목록 동기화 완료");
+            } catch (error) {
+              console.warn("게시판 로드 실패. 더미 데이터를 사용합니다.", error);
+              this.setFallbackData();
+            }
+          },
+
+          async submitPost() {
+            if (!this.newPost.title.trim() || !this.newPost.content.trim()) {
+              alert("제목과 내용을 모두 입력해주세요.");
+              return;
+            }
+            if (!this.newPost.nickname.trim()) {
+              alert("닉네임을 입력해주세요.");
+              return;
+            }
+            if (!this.newPost.password.trim()) {
+              alert("수정/삭제를 위해 비밀번호를 입력해주세요.");
+              return;
+            }
+
+            const categoryIdMap = {
+              tour: 1, food: 2, festival: 3, stay: 4, shopping: 5, culture: 6, leports: 7, course: 8
+            };
+            const categoryId = categoryIdMap[this.newPost.category];
+            const categoryName = KEY_TO_NAME[this.newPost.category] || null;
+
+            const payload = {
+              title: this.newPost.title,
+              content: this.newPost.content,
+              password: this.newPost.password,
+              nickname: this.newPost.nickname,
+              category_id: categoryId,
+              category_name: categoryName
+            };
+
+            try {
+              const response = await fetch(`${API_BASE_URL}/posts/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+              });
+
+              if (response.ok) {
+                let created = null;
+                try { created = await response.json(); } catch (e) { /* ignore */ }
+
+                if (created && created.id) {
+                  this.posts.unshift(toFrontendPost(created));
+                } else {
+                  await this.fetchPosts();
+                }
+
+                alert("게시물이 성공적으로 등록되었습니다!");
+                this.toggleWrite();
+              } else {
+                const errData = await response.json();
+                alert("게시물 등록에 실패했습니다: " + (errData.detail || "알 수 없는 오류"));
+              }
+            } catch (error) {
+              console.warn("서버가 꺼져있어 화면에만 임시로 등록합니다.", error);
+              this.posts.unshift({
+                id: Date.now(),
+                category: this.newPost.category,
+                categoryLabel: CATEGORY_MAP[categoryId]?.name || "기타",
+                title: this.newPost.title,
+                content: this.newPost.content,
+                author: "익명(임시)",
+                date: "방금 전"
+              });
+              this.toggleWrite();
+            }
+          },
+
+          selectTab(tab) {
+            this.activeTab = tab;
+            this.searchQuery = "";
+          },
+          applySearch() {},
+          toggleWrite() {
+            this.showWritePanel = !this.showWritePanel;
+            if (!this.showWritePanel) {
+              this.newPost = { category: "tour", title: "", content: "", password: "", nickname: "" };
+            }
+          },
+          setFallbackData() {
+            this.posts = [
+              {
+                id: 1,
+                category: "tour",
+                categoryLabel: "관광지",
+                title: "구미 금오산 도립공원 방문 후기",
+                content: "주말에 케이블카 타고 올라가서 폭포 보고 왔는데 정말 좋았어요.",
+                author: "익명1",
+                date: "2026. 7. 14"
+              }
+            ];
+          },
+          async sendMessage() {
+            const text = this.chatInput.trim();
+            if (!text) return;
+
+            this.chatMessages.push({ text: `질문: ${text}`, isLoading: false });
+            this.chatInput = "";
+            this.isChatLoading = true;
+
+            const loadingIndex = this.chatMessages.length;
+            this.chatMessages.push({ text: "답변을 생각 중입니다...", isLoading: true });
+
+            try {
+              const response = await fetch(`${API_BASE_URL}/chatbot/chat`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: text })
+              });
+
+              if (!response.ok) {
+                this.chatMessages[loadingIndex] = { text: "답변: 챗봇 서버 응답에 문제가 있습니다.", isLoading: false };
+                return;
+              }
+
+              const data = await response.json();
+              let reply = data?.reply ?? (typeof data === "string" ? data : JSON.stringify(data));
+
+              try {
+                const logsResp = await fetch(`${API_BASE_URL}/chatbot/logs`);
+                if (logsResp.ok) {
+                  const logsJson = await logsResp.json();
+
+                  const extractAssistant = (obj) => {
+                    if (!obj) return null;
+                    if (typeof obj === "string") return obj;
+                    if (Array.isArray(obj)) return extractAssistant(obj[obj.length - 1]);
+                    if (obj.reply) return obj.reply;
+                    if (obj.text) return obj.text;
+                    if (obj.message) return obj.message;
+                    if (obj.messages && Array.isArray(obj.messages)) {
+                      for (let i = obj.messages.length - 1; i >= 0; i--) {
+                        const m = obj.messages[i];
+                        if (m.role === "assistant") return m.content ?? m.text ?? m.message ?? null;
+                      }
+                    }
+                    if (obj.choices && Array.isArray(obj.choices) && obj.choices.length) {
+                      const lastChoice = obj.choices[obj.choices.length - 1];
+                      const msg = lastChoice.message || lastChoice;
+                      return msg?.content ?? msg?.text ?? null;
+                    }
+                    return null;
+                  };
+
+                  const logReply = extractAssistant(logsJson);
+                  if (logReply) reply = logReply;
+                }
+              } catch (err) {
+                console.debug("chatbot/logs 호출 실패 또는 없음:", err);
+              }
+
+              this.chatMessages[loadingIndex] = { text: `답변: ${reply}`, isLoading: false };
+            } catch (error) {
+              console.warn("챗봇 API 호출 실패, 로컬 답변으로 대체", error);
+              this.chatMessages[loadingIndex] = { text: `답변: ${this.generateFallbackAnswer(text)} (오프라인)`, isLoading: false };
+            } finally {
+              this.isChatLoading = false;
+              setTimeout(() => {
+                const win = document.querySelector(".chat-window");
+                if (win) win.scrollTop = win.scrollHeight;
+              }, 50);
+            }
+          },
+          generateFallbackAnswer(text) {
+            if (text.includes("축제")) return "이번 주 구미의 대표 축제인 '구미 라면 축제' 일정을 확인해보세요!";
+            if (text.includes("맛집") || text.includes("식당")) return "금오산 주변, 혹은 원평동 쪽에서 가성비 좋은 선산곱창 맛집을 추천해드릴 수 있어요.";
+            if (text.includes("관광") || text.includes("코스")) return "금오산 도립공원, 동락공원, 에코랜드 순으로 방문하시는 코스를 추천해드립니다.";
+            return "원하시는 구미·경북권 지역 정보나 축제, 맛집 관련 질문을 조금 더 구체적으로 보내주세요.";
+          }
+        }
+      }).mount("#app");
+    </script>
+  </body>
+</html>

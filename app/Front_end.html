@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LocalHub | 지역 정보 공유 커뮤니티</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --mint-50: #f4fdfb;
+        --mint-100: #dbf5ee;
+        --mint-200: #bfeee5;
+        --mint-400: #79d2bf;
+        --mint-500: #47bfa6;
+        --mint-700: #2d8e7d;
+        --ink-700: #25433d;
+        --ink-500: #5d7570;
+        --white: #ffffff;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: "Noto Sans KR", sans-serif;
+        background: linear-gradient(135deg, var(--mint-50), #ffffff 70%);
+        color: var(--ink-700);
+      }
+
+      a { text-decoration: none; color: inherit; }
+      button { font: inherit; cursor: pointer; }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0 24px;
+      }
+
+      .brand {
+        font-family: "Poppins", sans-serif;
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: var(--mint-700);
+        letter-spacing: -0.03em;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 16px;
+        font-weight: 700;
+        color: var(--ink-500);
+      }
+
+      .nav-links a:hover {
+        color: var(--mint-700);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 24px;
+        align-items: center;
+        background: var(--white);
+        border: 1px solid var(--mint-100);
+        border-radius: 28px;
+        padding: 32px;
+        box-shadow: 0 18px 50px rgba(71, 191, 166, 0.12);
+      }
+
+      .hero h1 {
+        font-family: "Poppins", sans-serif;
+        font-size: clamp(2rem, 3.6vw, 3rem);
+        line-height: 1.1;
+        margin: 0 0 14px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+      }
+
+      .hero p {
+        color: var(--ink-500);
+        line-height: 1.75;
+        margin: 0 0 18px;
+      }
+
+      .pill-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .pill {
+        background: var(--mint-100);
+        color: var(--mint-700);
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      .btn-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .btn {
+        border: none;
+        padding: 12px 16px;
+        border-radius: 999px;
+        font-weight: 700;
+      }
+
+      .btn-primary {
+        background: var(--mint-500);
+        color: white;
+      }
+
+      .btn-secondary {
+        background: var(--mint-50);
+        color: var(--mint-700);
+        border: 1px solid var(--mint-200);
+      }
+
+      .hero-card {
+        background: linear-gradient(135deg, var(--mint-500), var(--mint-700));
+        color: white;
+        border-radius: 24px;
+        padding: 24px;
+        min-height: 260px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .hero-card h3 {
+        margin: 0 0 8px;
+        font-size: 1.2rem;
+      }
+
+      .hero-card p {
+        color: rgba(255,255,255,0.95);
+        margin: 0;
+      }
+
+      .section {
+        margin-top: 28px;
+      }
+
+      .section-title {
+        font-family: "Poppins", sans-serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 14px;
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+
+      .card {
+        background: var(--white);
+        border: 1px solid var(--mint-100);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 8px 24px rgba(35, 67, 61, 0.05);
+      }
+
+      .card h4 {
+        margin: 0 0 8px;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--ink-500);
+        line-height: 1.7;
+      }
+
+      .post-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .post-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 16px;
+        border: 1px solid var(--mint-100);
+        border-radius: 14px;
+        background: var(--white);
+      }
+
+      .post-item strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .post-desc {
+        color: var(--ink-500);
+        font-size: 0.92rem;
+      }
+
+      .tag {
+        background: var(--mint-100);
+        color: var(--mint-700);
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .tab-switcher {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .tab-button {
+        border: 1px solid var(--mint-200);
+        background: var(--white);
+        color: var(--ink-500);
+        border-radius: 999px;
+        padding: 10px 14px;
+        font-weight: 700;
+      }
+
+      .tab-button.active {
+        background: var(--mint-500);
+        color: white;
+        border-color: var(--mint-500);
+      }
+
+      .tab-panel {
+        display: grid;
+        gap: 16px;
+        background: var(--white);
+        border: 1px solid var(--mint-100);
+        border-radius: 20px;
+        padding: 18px;
+        box-shadow: 0 8px 24px rgba(35, 67, 61, 0.05);
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+
+      .info-item {
+        padding: 14px;
+        border-radius: 14px;
+        background: var(--mint-50);
+        border: 1px solid var(--mint-100);
+      }
+
+      .info-item strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .map-panel {
+        grid-template-columns: 1.1fr 0.9fr;
+        align-items: start;
+      }
+
+      .map-placeholder {
+        min-height: 260px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, rgba(71, 191, 166, 0.15), rgba(45, 142, 125, 0.3));
+        border: 1px dashed var(--mint-400);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--mint-700);
+        font-weight: 700;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .map-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .map-list-item {
+        padding: 12px 14px;
+        border-radius: 14px;
+        background: var(--mint-50);
+        border: 1px solid var(--mint-100);
+      }
+
+      .chatbot {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-end;
+        gap: 10px;
+      }
+
+      .chat-window {
+        width: 320px;
+        background: white;
+        border: 1px solid var(--mint-100);
+        border-radius: 20px;
+        padding: 16px;
+        box-shadow: 0 16px 40px rgba(35, 67, 61, 0.16);
+      }
+
+      .chat-window h4 {
+        margin: 0 0 10px;
+      }
+
+      .message {
+        background: var(--mint-50);
+        padding: 8px 10px;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        font-size: 0.92rem;
+        line-height: 1.5;
+        word-break: break-word;
+      }
+      
+      .message.loading {
+        color: var(--ink-500);
+        font-style: italic;
+      }
+
+      .chat-input {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .chat-input input {
+        flex: 1;
+        border: 1px solid var(--mint-200);
+        border-radius: 999px;
+        padding: 10px 12px;
+      }
+
+      .chat-input button {
+        border: none;
+        border-radius: 999px;
+        padding: 10px 12px;
+        background: var(--mint-500);
+        color: white;
+      }
+
+      .chat-toggle {
+        border: none;
+        border-radius: 999px;
+        background: var(--mint-500);
+        color: white;
+        padding: 14px 18px;
+        font-weight: 800;
+        box-shadow: 0 10px 24px rgba(71, 191, 166, 0.3);
+      }
+
+      @media (max-width: 900px) {
+        .hero { grid-template-columns: 1fr; }
+        .grid-3 { grid-template-columns: 1fr; }
+      }
+
+      @media (max-width: 560px) {
+        .container { padding: 18px; }
+        .chat-window { width: 280px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <header class="topbar">
+          <a class="brand" href="Front_end.html">LocalHub</a>
+          <nav class="nav-links">
+            <a href="Front_end.html">홈</a>
+            <a href="Front_information.html">지역정보</a>
+            <a href="Front_map_tab.html">지도</a>
+            <a href="Front_community.html">커뮤니티</a>
+          </nav>
+        </header>
+
+        <section class="hero">
+          <div>
+            <div class="pill-group">
+              <span class="pill">구미·경북 · 관광지</span>
+              <span class="pill">익명 커뮤니티</span>
+              <span class="pill">AI 지역 챗봇</span>
+            </div>
+
+            <h1>지역의 숨은 이야기,<br />우리 동네의 소식을 한눈에.</h1>
+            <p>
+              LocalHub는 주민과 관광객가 함께 공공데이터 기반의 축제, 맛집, 여행 코스를
+              공유하고, 궁금한 지역 정보를 빠르게 확인할 수 있는 신뢰감 있는 커뮤니티입니다.
+            </p>
+
+            <div class="btn-row">
+              <a class="btn btn-primary" href="Front_map_tab.html">지도 보기</a>
+              <a class="btn btn-secondary" href="#chat" @click="chatOpen = true">챗봇 열기</a>
+            </div>
+          </div>
+
+          <div class="hero-card">
+            <div>
+              <h3>이번 주 추천 지역</h3>
+              <p>금오산 올레길 산책 코스와 라면 축제 일정이 인기를 끌고 있습니다.</p>
+            </div>
+            <div>
+              <strong>신뢰 있는 정보</strong>
+              <p>공공데이터와 커뮤니티 경험을 결합해 더 정확한 안내를 제공합니다.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="about" class="section">
+          <div class="section-title">LocalHub의 핵심 기능</div>
+          <div class="grid-3">
+            <article class="card">
+              <h4>지역 정보 탐색</h4>
+              <p>관광지, 축제, 맛집, 여행 코스를 한 번에 확인하고 주변 정보를 빠르게 탐색합니다.</p>
+            </article>
+            <article class="card">
+              <h4>익명 커뮤니티</h4>
+              <p>로그인 없이도 제목과 내용으로 자유롭게 의견을 남기고 서로의 경험을 공유할 수 있습니다.</p>
+            </article>
+            <article class="card">
+              <h4>AI 챗봇 질의</h4>
+              <p>“구미 축제 일정”, “맛집 추천”, “관광 코스” 같은 자연어 질문에 즉시 답변합니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">지역 탐색</div>
+
+          <div class="tab-switcher">
+            <button type="button" class="tab-button" :class="{ active: activeTab === 'info' }" @click="activeTab = 'info'">
+              지역정보
+            </button>
+            <button type="button" class="tab-button" :class="{ active: activeTab === 'map' }" @click="activeTab = 'map'">
+              지도
+            </button>
+          </div>
+
+          <div v-if="activeTab === 'info'" class="tab-panel">
+            <div class="info-grid">
+              <div class="info-item">
+                <strong>금오산 도립공원</strong>
+                <div class="post-desc">수려한 자연경관과 케이블카, 산책로가 어우러진 대표 관광지입니다.</div>
+              </div>
+              <div class="info-item">
+                <strong>동락공원</strong>
+                <div class="post-desc">낙동강을 따라 자전거를 타거나 피크닉을 즐기기에 아주 좋습니다.</div>
+              </div>
+              <div class="info-item">
+                <strong>구미 라면 축제</strong>
+                <div class="post-desc">매년 열리는 이색 축제로, 다양한 라면과 지역 문화를 즐길 수 있습니다.</div>
+              </div>
+              <div class="info-item">
+                <strong>새마을중앙시장</strong>
+                <div class="post-desc">현지 먹거리와 정겨운 전통 분위기를 동시에 즐길 수 있는 인기 명소입니다.</div>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="tab-panel map-panel">
+            <div class="map-placeholder">
+              구미·경북권 지도 영역<br />실제 지도 API 연결 시 위치 마커가 표시됩니다.
+            </div>
+            <div class="map-list">
+              <div class="map-list-item"><strong>금오산 올레길</strong><div class="post-desc">금오지를 둘러싼 풍경이 뛰어납니다.</div></div>
+              <div class="map-list-item"><strong>낙동강 체육공원</strong><div class="post-desc">넓은 들판과 캠핑장이 잘 어우러집니다.</div></div>
+              <div class="map-list-item"><strong>구미 에코랜드</strong><div class="post-desc">자연 생태 체험과 모노레일로 가족 여행에 적합합니다.</div></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="board" class="section">
+          <div class="section-title">최근 커뮤니티 게시글</div>
+          <div class="post-list">
+            <div v-for="post in posts" :key="post.id" class="post-item">
+              <div>
+                <strong>{{ post.title }}</strong>
+                <div class="post-desc">{{ post.description }}</div>
+              </div>
+              <span class="tag">{{ post.tag }}</span>
+            </div>
+            <div v-if="posts.length === 0" class="post-item">
+              <strong>게시글이 없습니다.</strong>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div id="chat" class="chatbot">
+        <div v-if="chatOpen" class="chat-window">
+          <h4>LocalHub 챗봇</h4>
+          <div v-for="(msg, index) in chatMessages" :key="index" class="message" :class="{'loading': msg.isLoading}">
+            {{ msg.text }}
+          </div>
+
+          <div class="chat-input">
+            <input v-model="chatInput" @keyup.enter="sendMessage" placeholder="질문을 입력하세요 (예: 구미 맛집 추천)" :disabled="isChatLoading" />
+            <button @click="sendMessage" :disabled="isChatLoading">전송</button>
+          </div>
+        </div>
+
+        <button class="chat-toggle" @click="chatOpen = !chatOpen">
+          {{ chatOpen ? "닫기" : "💬 챗봇" }}
+        </button>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+  const { createApp } = Vue;
+  const API_BASE_URL = "https://backendserver-tuvk.onrender.com";
+
+  createApp({
+    data() {
+      return {
+        posts: [],
+        activeTab: "info",
+        chatOpen: false,
+        chatInput: "",
+        isChatLoading: false,
+        chatMessages: [
+          { text: "안녕하세요! 구미·경북권 지역 정보를 도와드릴게요.", isLoading: false },
+          { text: "예: “구미 라면 축제 일정”, “금오산 맛집 추천”, “관광 코스”라고 말해보세요.", isLoading: false },
+        ],
+      };
+    },
+    async mounted() {
+      await this.fetchPosts();
+    },
+    methods: {
+      async fetchPosts() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/posts/`);
+          if (!response.ok) throw new Error("서버 응답 오류");
+
+          const data = await response.json();
+          const posts = Array.isArray(data) ? data : (data.posts || []);
+
+          this.posts = posts.slice(0, 6).map(post => ({
+            id: post.id,
+            title: post.title,
+            description: post.content,
+            tag: post.category_id ? `카테고리 ${post.category_id}` : "일반",
+          }));
+          console.log("게시판 백엔드 데이터 연동 성공!");
+        } catch (error) {
+          console.warn("게시판 연동 실패. 더미 데이터를 사용합니다.", error);
+          this.setFallbackPosts();
+        }
+      },
+      setFallbackPosts() {
+        this.posts = [
+          {
+            id: 1,
+            title: "금오산 등산 루트 추천해요",
+            description: "초보자도 가기 좋은 코스로 정리해봤어요.",
+            tag: "관광지",
+          },
+          {
+            id: 2,
+            title: "이번 주 라면 축제 라인업 공유!",
+            description: "다양한 이색 라면 부스가 열린다고 하네요.",
+            tag: "축제",
+          },
+          {
+            id: 3,
+            title: "원평동 가성비 맛집 리스트",
+            description: "현지인들만 아는 찐 맛집 위주로 모아봤어요.",
+            tag: "음식점",
+          },
+        ];
+      },
+      async sendMessage() {
+        const text = this.chatInput.trim();
+        if (!text) return;
+
+        // 사용자 질문 추가
+        this.chatMessages.push({ text: `질문: ${text}`, isLoading: false });
+        this.chatInput = "";
+        this.isChatLoading = true;
+
+        // 로딩 플레이스홀더 추가 (이 인덱스를 나중에 덮어씀)
+        const loadingIndex = this.chatMessages.length;
+        this.chatMessages.push({ text: "답변을 생각 중입니다...", isLoading: true });
+
+        try {
+          // 1) /chatbot/chat 호출 (기본 응답)
+          const response = await fetch(`${API_BASE_URL}/chatbot/chat`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text })
+          });
+
+          if (!response.ok) {
+            this.chatMessages[loadingIndex] = { text: "답변: 챗봇 서버 응답에 문제가 있습니다.", isLoading: false };
+            return;
+          }
+
+          const data = await response.json();
+          let reply = data?.reply ?? (typeof data === "string" ? data : JSON.stringify(data));
+
+          // 2) 가능하면 /chatbot/logs 호출해 더 정제된(또는 기록된) assistant 응답을 우선 사용
+          try {
+            const logsResp = await fetch(`${API_BASE_URL}/chatbot/logs`);
+            if (logsResp.ok) {
+              const logsJson = await logsResp.json();
+
+              const extractAssistant = (obj) => {
+                if (!obj) return null;
+                if (typeof obj === "string") return obj;
+                if (Array.isArray(obj)) {
+                  return extractAssistant(obj[obj.length - 1]);
+                }
+                if (obj.reply) return obj.reply;
+                if (obj.text) return obj.text;
+                if (obj.message) return obj.message;
+                if (obj.messages && Array.isArray(obj.messages)) {
+                  for (let i = obj.messages.length - 1; i >= 0; i--) {
+                    const m = obj.messages[i];
+                    if (m.role === "assistant") return m.content ?? m.text ?? m.message ?? null;
+                  }
+                }
+                if (obj.choices && Array.isArray(obj.choices) && obj.choices.length) {
+                  const lastChoice = obj.choices[obj.choices.length - 1];
+                  const msg = lastChoice.message || lastChoice;
+                  return msg?.content ?? msg?.text ?? null;
+                }
+                return null;
+              };
+
+              const logReply = extractAssistant(logsJson);
+              if (logReply) reply = logReply;
+            }
+          } catch (err) {
+            // logs 엔드포인트가 없거나 파싱 실패 시 무시하고 기본 reply 사용
+            console.debug("chatbot/logs 호출 실패 또는 없음:", err);
+          }
+
+          // 로딩 플레이스홀더를 실제 응답으로 교체
+          this.chatMessages[loadingIndex] = { text: `답변: ${reply}`, isLoading: false };
+        } catch (error) {
+          console.warn("챗봇 API 호출 실패, 로컬 답변으로 대체", error);
+          this.chatMessages[loadingIndex] = { text: `답변: ${this.generateFallbackAnswer(text)} (오프라인)`, isLoading: false };
+        } finally {
+          this.isChatLoading = false;
+          // 스크롤을 맨 아래로
+          setTimeout(() => {
+            const win = document.querySelector(".chat-window");
+            if (win) win.scrollTop = win.scrollHeight;
+          }, 50);
+        }
+      },
+      generateFallbackAnswer(text) {
+        if (text.includes("축제")) return "이번 주 구미의 대표 축제인 '구미 라면 축제' 일정을 확인해보세요!";
+        if (text.includes("맛집") || text.includes("식당")) return "금오산 주변, 혹은 원평동 쪽에서 가성비 좋은 선산곱창 맛집을 추천해드릴 수 있어요.";
+        if (text.includes("관광") || text.includes("코스")) return "금오산 도립공원, 동락공원, 에코랜드 순으로 방문하시는 코스를 추천해드립니다.";
+        return "원하시는 구미·경북권 지역 정보나 축제, 맛집 관련 질문을 조금 더 구체적으로 보내주세요.";
+      },
+    },
+  }).mount("#app");
+</script>
+  </body>
+</html>
